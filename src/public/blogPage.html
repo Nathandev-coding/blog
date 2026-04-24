@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blog - FC Munana Kipushi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-blue-950 text-white">
+
+
+    <!-- NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-blue-950/90 backdrop-blur-md border-b border-blue-800">
+
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+
+    <!-- LOGO -->
+    <div class="flex items-center gap-2 cursor-pointer" onclick="setTab('home')">
+
+      <div class="w-10 h-10 bg-white text-blue-950 font-black flex items-center justify-center rounded-full border-2 border-blue-600 shadow-lg">
+        M
+      </div>
+
+      <span class="font-bold hidden sm:block text-lg text-white tracking-tight">
+        FC MUNANA KIPUSHI
+      </span>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="flex divide-x divide-blue-800 text-xs font-bold uppercase tracking-widest">
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-400"
+              onclick="setTab('home')" data-tab="home">
+        🏠
+        <span class="hidden sm:block">Accueil</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('news')" data-tab="news">
+        📰
+        <span class="hidden sm:block">Actualités</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('stats')" data-tab="stats">
+        🏆
+        <span class="hidden sm:block">Stats</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('team')" data-tab="team">
+        👥
+        <span class="hidden sm:block">Équipe</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('fans')" data-tab="fans">
+        💬
+        <span class="hidden sm:block">Fans</span>
+      </button>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<!-- HEADER -->
+<section class="relative h-[40vh] flex items-center justify-center overflow-hidden">
+  
+  <img src="https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&q=80&w=1920"
+       class="absolute inset-0 w-full h-full object-cover opacity-30" />
+
+  <div class="absolute inset-0 bg-gradient-to-b from-blue-950/80 via-blue-950/40 to-blue-950"></div>
+
+  <div class="relative text-center px-4">
+    <div class="text-blue-400 text-4xl mb-4">📰</div>
+
+    <h1 class="text-4xl md:text-6xl font-black uppercase italic">
+      Le <span class="text-blue-400">Journal</span> du Club
+    </h1>
+
+    <p class="text-blue-100/60 mt-4 max-w-xl mx-auto text-xs uppercase tracking-widest">
+      Toutes les histoires, analyses et exclusivités du FC Munana Kipushi
+    </p>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<section class="max-w-7xl mx-auto px-4 -mt-10 relative z-10">
+
+  <div class="bg-blue-900/50 backdrop-blur-xl border border-blue-800 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+
+    <!-- Categories -->
+    <div class="flex flex-wrap gap-2 justify-center">
+      <button class="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold uppercase">Tout</button>
+      <button class="px-4 py-2 text-blue-200 hover:bg-blue-800 rounded-xl text-xs font-bold uppercase">Match</button>
+      <button class="px-4 py-2 text-blue-200 hover:bg-blue-800 rounded-xl text-xs font-bold uppercase">Transfert</button>
+      <button class="px-4 py-2 text-blue-200 hover:bg-blue-800 rounded-xl text-xs font-bold uppercase">Club</button>
+      <button class="px-4 py-2 text-blue-200 hover:bg-blue-800 rounded-xl text-xs font-bold uppercase">Actualité</button>
+    </div>
+
+    <!-- Search -->
+    <div class="relative w-full md:w-64">
+      <input type="text" placeholder="Rechercher..."
+             class="w-full bg-blue-950/50 border border-blue-800 rounded-xl py-3 px-4 text-sm text-white focus:border-blue-400 outline-none"/>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARTICLES GRID -->
+<section class="max-w-7xl mx-auto px-4 py-16 ">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+    <!-- ARTICLE CARD -->
+    <div class="bg-blue-900/20 border border-blue-800 rounded-3xl overflow-hidden hover:border-blue-400 transition">
+      
+      <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=800"
+           class="w-full h-56 object-cover"/>
+
+      <div class="p-6">
+
+        <span class="text-[10px] bg-blue-600 px-3 py-1 rounded-full uppercase font-bold">
+          Match
+        </span>
+
+        <div class="text-[10px] text-blue-300 mt-3 uppercase flex gap-4">
+          <span>📅 2024-04-22</span>
+          <span>👤 Admin</span>
+        </div>
+
+        <h3 class="text-xl font-bold mt-4">
+          Victoire historique à Kipushi
+        </h3>
+
+        <p class="text-blue-200/60 text-sm mt-3">
+          Le FC Munana s'impose avec brio face aux Corbeaux locaux...
+        </p>
+
+        <div class="mt-6 border-t border-blue-800 pt-4 flex justify-between items-center">
+          <span class="text-xs uppercase font-bold">Lire l'article →</span>
+          <span class="text-blue-400 text-xs">♥ 342</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="bg-blue-900/20 border border-blue-800 rounded-3xl overflow-hidden hover:border-blue-400 transition">
+      <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800"
+           class="w-full h-56 object-cover"/>
+
+      <div class="p-6">
+        <span class="text-[10px] bg-blue-600 px-3 py-1 rounded-full uppercase font-bold">Transfert</span>
+
+        <h3 class="text-xl font-bold mt-4">Renforcement de l'effectif</h3>
+
+        <p class="text-blue-200/60 text-sm mt-3">
+          Le club annonce de nouvelles recrues...
+        </p>
+
+        <div class="mt-6 border-t border-blue-800 pt-4 flex justify-between">
+          <span class="text-xs uppercase font-bold">Lire →</span>
+          <span class="text-blue-400 text-xs">♥ 156</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="bg-blue-900/20 border border-blue-800 rounded-3xl overflow-hidden hover:border-blue-400 transition">
+      <img src="https://images.unsplash.com/photo-1510051640316-cee39563ddab?auto=format&fit=crop&q=80&w=800"
+           class="w-full h-56 object-cover"/>
+
+      <div class="p-6">
+        <span class="text-[10px] bg-blue-600 px-3 py-1 rounded-full uppercase font-bold">Club</span>
+
+        <h3 class="text-xl font-bold mt-4">L'unité des supporters</h3>
+
+        <p class="text-blue-200/60 text-sm mt-3">
+          Retour sur la ferveur des fans...
+        </p>
+
+        <div class="mt-6 border-t border-blue-800 pt-4 flex justify-between">
+          <span class="text-xs uppercase font-bold">Lire →</span>
+          <span class="text-blue-400 text-xs">♥ 421</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="bg-blue-950 text-white pt-20 pb-10">
+
+  <div class="max-w-7xl mx-auto px-4">
+
+    <!-- GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+
+      <!-- CLUB -->
+      <div class="space-y-6">
+
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white text-blue-950 font-black flex items-center justify-center rounded-full border-2 border-blue-600 text-xl">
+            M
+          </div>
+          <span class="font-black text-2xl uppercase">FC MUNANA</span>
+        </div>
+
+        <p class="text-blue-100/60 text-sm leading-relaxed">
+          Le FC Munana Kipushi est un club historique de la RDC,
+          symbole de fierté et de talent pour la jeunesse.
+        </p>
+
+        <!-- SOCIAL -->
+        <div class="flex gap-4">
+
+          <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
+            📘
+          </button>
+
+          <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
+            📸
+          </button>
+
+          <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
+            🐦
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- NAVIGATION -->
+      <div>
+
+        <h4 class="text-sm font-black uppercase tracking-[0.2em] text-blue-400 mb-8">
+          Navigation
+        </h4>
+
+        <ul class="space-y-4 text-blue-200/60 text-sm font-bold uppercase tracking-widest">
+
+          <li><a href="#" class="hover:text-white">Actualités</a></li>
+          <li><a href="#" class="hover:text-white">Équipe</a></li>
+          <li><a href="#" class="hover:text-white">Académie</a></li>
+          <li><a href="#" class="hover:text-white">Stats</a></li>
+          <li><a href="#" class="hover:text-white">Billetterie</a></li>
+
+        </ul>
+
+      </div>
+
+      <!-- CONTACT -->
+      <div>
+
+        <h4 class="text-sm font-black uppercase tracking-[0.2em] text-blue-400 mb-8">
+          Contact
+        </h4>
+
+        <div class="space-y-6 text-blue-200/60 text-sm">
+
+          <div class="flex gap-3">
+            📍 <span>Kipushi, RDC</span>
+          </div>
+
+          <div class="flex gap-3">
+            📞 <span>+243 000 000 000</span>
+          </div>
+
+          <div class="flex gap-3">
+            ✉️ <span>contact@munana.cd</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- NEWSLETTER -->
+      <div>
+
+        <h4 class="text-sm font-black uppercase tracking-[0.2em] text-blue-400 mb-8">
+          Newsletter
+        </h4>
+
+        <p class="text-blue-200/60 text-xs mb-6">
+          Recevez les dernières actualités du club.
+        </p>
+
+        <div class="flex gap-2">
+
+          <input id="emailInput"
+            type="email"
+            placeholder="Votre email"
+            class="w-full px-4 py-3 rounded-lg bg-blue-900/50 border border-blue-800 text-sm focus:outline-none focus:border-blue-400">
+
+          <button onclick="subscribe()"
+            class="px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-xs rounded-lg transition">
+            OK
+          </button>
+
+        </div>
+
+        <p id="msg" class="text-xs text-green-400 mt-3 hidden">
+          ✔ Inscription réussie !
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- BOTTOM BAR -->
+    <div class="border-t border-blue-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+
+      <p class="text-blue-200/30 text-[10px] uppercase tracking-[0.3em]">
+        © 2024 FC MUNANA • Tous droits réservés
+      </p>
+
+      <div class="flex gap-8 text-blue-200/30 text-[10px] uppercase tracking-[0.3em]">
+        <a href="#" class="hover:text-white">Mentions légales</a>
+        <a href="#" class="hover:text-white">Confidentialité</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</footer>
+
+</body>
+</html>
