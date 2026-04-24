@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/blog", "dest": "/blogPage.html" },
+    { "src": "/staff", "dest": "/staff.html" },
+    { "src": "/partners", "dest": "/partners.html" },
+    { "src": "/calendar", "dest": "/calendar.html" }
+  ]
+}
