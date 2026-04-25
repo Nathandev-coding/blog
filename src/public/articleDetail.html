@@ -9,6 +9,65 @@
 
 <body class="bg-blue-950 text-white">
 
+
+    <!-- NAVBAR -->
+<nav class="fixed top-0 left-0 right-0 z-50 bg-blue-950/90 backdrop-blur-md border-b border-blue-800">
+
+  <div class="max-w-7xl mx-auto px-4 flex items-center justify-between h-16">
+
+    <!-- LOGO -->
+    <div class="flex items-center gap-2 cursor-pointer" onclick="setTab('home')">
+
+      <div class="w-10 h-10 bg-white text-blue-950 font-black flex items-center justify-center rounded-full border-2 border-blue-600 shadow-lg">
+        M
+      </div>
+
+      <span class="font-bold hidden sm:block text-lg text-white tracking-tight">
+        FC MUNANA KIPUSHI
+      </span>
+
+    </div>
+
+    <!-- MENU -->
+    <div class="flex divide-x divide-blue-800 text-xs font-bold uppercase tracking-widest">
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-400"
+              onclick="setTab('home')" data-tab="home">
+        🏠
+        <span class="hidden sm:block">Accueil</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('news')" data-tab="news">
+        📰
+        <span class="hidden sm:block">Actualités</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('stats')" data-tab="stats">
+        🏆
+        <span class="hidden sm:block">Stats</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('team')" data-tab="team">
+        👥
+        <span class="hidden sm:block">Équipe</span>
+      </button>
+
+      <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
+              onclick="setTab('fans')" data-tab="fans">
+        💬
+        <span class="hidden sm:block">Fans</span>
+      </button>
+
+    </div>
+
+  </div>
+
+</nav>
+
+
 <!-- BACK BUTTON -->
 <div class="max-w-4xl mx-auto px-4 pt-24">
   <a href="#" class="flex items-center gap-2 text-blue-400 font-bold uppercase text-xs tracking-widest hover:text-white transition">
