@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Blog - FC Munana Kipushi</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body class="bg-blue-950 text-white">
@@ -32,26 +33,26 @@
     <div class="flex divide-x divide-blue-800 text-xs font-bold uppercase tracking-widest">
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-400"
-              onclick="setTab('home')" data-tab="home">
-        🏠
+              onclick="window.location.href='index.html'" data-tab="home">
+        <i class="fas fa-home"></i>
         <span class="hidden sm:block">Accueil</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
-              onclick="setTab('news')" data-tab="news">
-        📰
+              onclick="window.location.href='blogPage.html'" data-tab="news">
+        <i class="fas fa-newspaper"></i>
         <span class="hidden sm:block">Actualités</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
               onclick="setTab('stats')" data-tab="stats">
-        🏆
+        <i class="fas fa-chart-line"></i>
         <span class="hidden sm:block">Stats</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
-              onclick="setTab('team')" data-tab="team">
-        👥
+              onclick="window.location.href='staff.html'" data-tab="team">
+        <i class="fas fa-users"></i>
         <span class="hidden sm:block">Équipe</span>
       </button>
 
