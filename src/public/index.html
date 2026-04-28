@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hero FC Munana</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
     .fade-up {
@@ -49,25 +50,25 @@
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-400"
               onclick="setTab('home')" data-tab="home">
-        🏠
+        <i class="fas fa-home"></i>
         <span class="hidden sm:block">Accueil</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
               onclick="setTab('news')" data-tab="news">
-        📰
+        <i class="fas fa-newspaper"></i>
         <span class="hidden sm:block">Actualités</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
               onclick="setTab('stats')" data-tab="stats">
-        🏆
+        <i class="fas fa-chart-line"></i>
         <span class="hidden sm:block">Stats</span>
       </button>
 
       <button class="nav-item relative px-4 py-2 flex flex-col items-center gap-1 text-blue-100/70"
               onclick="setTab('team')" data-tab="team">
-        👥
+        <i class="fas fa-users"></i>
         <span class="hidden sm:block">Équipe</span>
       </button>
 
@@ -99,13 +100,13 @@
 
     <!-- BADGE -->
     <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-full text-white text-xs font-bold uppercase tracking-widest mb-6">
-      🏆 Fierté de Kipushi
+      <i class="fas fa-trophy"></i> Fierté de Kipushi
     </div>
 
     <!-- TITLE -->
     <h1 class="text-5xl md:text-7xl font-black text-white uppercase leading-[0.9] mb-6">
       L’EXCELLENCE <br>
-      <span class="text-blue-400">À CHAQUE PAS</span>
+      <span class="text-blue-650">À CHAQUE PAS</span>
     </h1>
 
     <!-- TEXT -->
@@ -405,15 +406,15 @@
         <div class="flex gap-4">
 
           <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
-            📘
+            <i class="fab fa-facebook"></i>
           </button>
 
           <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
-            📸
+            <i class="fab fa-instagram"></i>
           </button>
 
           <button class="w-10 h-10 bg-blue-900 rounded-full hover:bg-blue-400 hover:text-blue-950 transition flex items-center justify-center">
-            🐦
+            <i class="fab fa-x-twitter"></i>
           </button>
 
         </div>
