@@ -22,6 +22,32 @@
         transform: translateY(0);
       }
     }
+
+     @keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}
+
+ @keyframes scrolle {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+.animate-scroll-left {
+  animation: scrolle 20s linear infinite;
+}
   </style>
 </head>
 
@@ -141,23 +167,27 @@
   </div>
 
   
-  <div class="overflow-hidden w-full bg-blue-950 py-6">
+
+
+</section>
+
+    <div class="overflow-hidden w-full bg-blue-950 py-6">
 
   <div class="flex gap-6 w-max animate-scroll">
 
     <!-- images (dupliquées pour effet infini) -->
-    <img src="https://i.pravatar.cc/300?img=1" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=2" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=3" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=4" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=5" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=1" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=2" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=3" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=4" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=5" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
 
     <!-- duplication pour boucle fluide -->
-    <img src="https://i.pravatar.cc/300?img=1" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=2" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=3" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=4" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
-    <img src="https://i.pravatar.cc/300?img=5" class="w-30 h-42 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=1" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=2" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=3" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=4" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=5" class="w-20 h-32 rounded-2xl object-cover shadow-lg">
 
   </div>
 
@@ -167,7 +197,23 @@
 
   <div class="flex gap-6 w-max animate-scroll-left">
 
-</section>
+    <!-- images (dupliquées pour effet infini) -->
+    <img src="https://i.pravatar.cc/300?img=1" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=2" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=3" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=4" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=5" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+
+    <!-- duplication pour boucle fluide -->
+    <img src="https://i.pravatar.cc/300?img=1" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=2" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=3" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=4" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+    <img src="https://i.pravatar.cc/300?img=5" class="w-40 h-52 rounded-2xl object-cover shadow-lg">
+
+  </div>
+
+</div>
 
 <section class="py-20 bg-blue-950 text-white">
 
