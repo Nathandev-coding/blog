@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-blue-950 text-white">
+
+<div class="min-h-screen flex">
+
+  <!-- SIDEBAR -->
+  <aside class="w-64 h-screen hidden lg:flex flex-col p-6 bg-blue-950/50 border-r border-blue-900 ">
+    
+    <div class="mb-12">
+      <h2 class="text-xl font-black italic uppercase">
+        ADMIN<span class="text-blue-400">CORE</span>
+      </h2>
+    </div>
+
+    <nav class="flex-grow space-y-2">
+      <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white text-xs font-bold uppercase tracking-widest">
+        Dashboard
+      </button>
+      <button onclick="window.location.href='/a/article-management'" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100/40 hover:text-white hover:bg-blue-900 text-xs font-bold uppercase tracking-widest">
+        Actualités
+      </button>
+      <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100/40 hover:text-white hover:bg-blue-900 text-xs font-bold uppercase tracking-widest">
+        Effectif
+      </button>
+      <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100/40 hover:text-white hover:bg-blue-900 text-xs font-bold uppercase tracking-widest">
+        Calendrier
+      </button>
+      <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100/40 hover:text-white hover:bg-blue-900 text-xs font-bold uppercase tracking-widest">
+        Paramètres
+      </button>
+    </nav>
+
+    <button class="mt-auto px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl text-xs font-bold uppercase tracking-widest">
+      Déconnexion
+    </button>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 overflow-auto">
+
+   <!-- HEADER -->
+  <div class="px-6 md:px-8 py-4 border-b border-blue-900 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-black uppercase italic tracking-tighter">
+        Gestion des <span class="text-blue-400">Utilisateurs</span>
+      </h1>
+      <p class="text-blue-100/40 text-xs font-bold uppercase tracking-widest mt-1">
+        Administrez les comptes et les permissions
+      </p>
+    </div>
+
+    <button id="btnAdd" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-[10px] tracking-widest px-6 py-3 rounded-xl shadow-lg shadow-blue-600/20">
+      ➕ Ajouter un Utilisateur
+    </button>
+  </div>
+
+<!-- SEARCH + FILTER RESPONSIVE -->
+<div class="p-4 md:p-8 grid grid-cols-1 md:grid-cols-12 gap-4 mb-8">
+
+  <!-- SEARCH -->
+  <div class="md:col-span-12 relative">
+    <input 
+      type="text"
+      placeholder="Rechercher par nom ou email..."
+      class="w-full bg-blue-900/20 border border-blue-800 rounded-2xl py-4 px-4 text-white placeholder:text-blue-100/20 focus:outline-none focus:border-blue-400"
+    />
+  </div>
+
+  <!-- FILTER ACTIONS -->
+  <div class="md:col-span-12 flex flex-col sm:flex-row gap-3">
+
+    <button class="w-full sm:w-auto flex-1 bg-blue-950/50 border border-blue-800 rounded-2xl text-blue-100/40 font-bold text-[10px] uppercase tracking-widest hover:text-white py-3 transition">
+      Filtrer
+    </button>
+
+    <button class="w-full sm:w-auto flex-1 bg-blue-950/50 border border-blue-800 rounded-2xl text-blue-100/40 font-bold text-[10px] uppercase tracking-widest hover:text-white py-3 transition">
+      Export
+    </button>
+
+  </div>
+
+</div>
+ <!-- TABLE WRAPPER -->
+<div class="p-4 md:p-8">
+
+  <!-- DESKTOP TABLE -->
+  <div class="hidden md:block bg-blue-900/20 border border-blue-800 rounded-[2.5rem] overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left">
+
+        <thead>
+          <tr class="bg-blue-900/30 text-[10px] font-black text-blue-100/40 uppercase tracking-[0.2em] border-b border-blue-800">
+            <th class="px-8 py-6">Identité</th>
+            <th class="px-8 py-6">Rôle</th>
+            <th class="px-8 py-6 text-right">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody id="tableUsers" class="divide-y divide-blue-900/50">
+
+          <!-- ROW -->
+          <tr class="hover:bg-blue-900/10 group">
+            <td class="px-8 py-5">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-950 border border-blue-800 flex items-center justify-center text-blue-400">
+                  👤
+                </div>
+                <div>
+                  <p class="text-sm font-bold text-white">Nathan Tshimbalaga</p>
+                  <p class="text-[10px] text-blue-100/30 font-bold">admin@fcmunana.com</p>
+                </div>
+              </div>
+            </td>
+
+            <td class="px-8 py-5">
+              <span class="px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full text-[10px] font-black uppercase">
+                ADMIN
+              </span>
+            </td>
+
+            <td class="px-8 py-5">
+              <span class="text-green-400 text-[10px] font-bold uppercase">Actif</span>
+            </td>
+
+            <td class="px-8 py-5 text-blue-100/40 text-[10px] font-bold uppercase">
+              15 Jan 2024
+            </td>
+
+            <td class="px-8 py-5 text-right">
+              <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition">
+                <button class="p-2 bg-blue-900/30 rounded-lg text-blue-400">✏️</button>
+                <button class="p-2 bg-red-500/10 rounded-lg text-red-400">🗑️</button>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MOBILE CARDS -->
+  <div class="md:hidden space-y-4">
+
+    <!-- CARD -->
+    <div class="bg-blue-900/20 border border-blue-800 rounded-2xl p-4">
+
+      <div class="flex items-center gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-950 border border-blue-800 flex items-center justify-center text-blue-400">
+          👤
+        </div>
+        <div>
+          <p class="text-sm font-bold text-white">Nathan Tshimbalaga</p>
+          <p class="text-[10px] text-blue-100/30 font-bold">admin@fcmunana.com</p>
+        </div>
+      </div>
+
+      <div class="flex justify-between text-[10px] uppercase font-bold tracking-widest text-blue-100/40 mb-2">
+        <span>Rôle</span>
+        <span>Statut</span>
+      </div>
+
+      <div class="flex justify-between mb-3">
+        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-full text-[10px] font-black uppercase">
+          ADMIN
+        </span>
+
+        <span class="text-green-400 text-[10px] font-bold uppercase">
+          Actif
+        </span>
+      </div>
+
+      <div class="text-[10px] font-bold text-blue-100/40 uppercase mb-3">
+        Inscrit: 15 Jan 2024
+      </div>
+
+      <div class="flex gap-2">
+        <button class="flex-1 py-2 bg-blue-900/30 rounded-xl text-blue-400 text-[10px] font-bold uppercase">
+          Modifier
+        </button>
+        <button class="flex-1 py-2 bg-red-500/10 rounded-xl text-red-400 text-[10px] font-bold uppercase">
+          Supprimer
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- BACKDROP + MODAL -->
+<div id="userModal"
+     class="fixed hidden  inset-0 z-[100] bg-black/60 backdrop-blur-sm flex  items-center justify-center px-4">
+
+  <!-- BACKDROP -->
+  <div onclick="closeModal('userModal')"
+       class="absolute inset-0 bg-blue-950/80 backdrop-blur-md opacity-0 transition-all duration-200">
+  </div>
+
+  <!-- MODAL BOX -->
+  <div id="modalContent"
+       class="relative w-full max-w-lg bg-blue-900 border border-blue-800 rounded-[3rem] p-8 md:p-12 shadow-2xl overflow-hidden
+               opacity-0 scale-95 translate-y-5 transition-all duration-200">
+
+    <!-- CLOSE BUTTON -->
+    <div class="absolute top-0 right-0 p-8">
+      <button id="btnClose"
+              class="p-2 bg-blue-950/50 rounded-xl text-blue-100/30 hover:text-white transition-colors">
+        ✕
+      </button>
+    </div>
+
+    <!-- TITLE -->
+    <h2 class="text-2xl font-black text-white uppercase italic tracking-tighter mb-8">
+      Ajouter <span class="text-blue-400">Utilisateur</span>
+    </h2>
+
+    <!-- FORM -->
+    <form id="userForm" class="space-y-6">
+
+      <!-- NAME -->
+      <div class="space-y-2">
+        <label class="text-[10px] font-black text-blue-100/40 uppercase tracking-widest ml-1">
+          Nom Complet
+        </label>
+
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-blue-100/20">👤</span>
+          <input type="text" id="name"
+                 placeholder="Jean Kabamba"
+                 class="w-full bg-blue-950/50 border border-blue-800 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-400">
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="space-y-2">
+        <label class="text-[10px] font-black text-blue-100/40 uppercase tracking-widest ml-1">
+          Email
+        </label>
+
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-blue-100/20">✉️</span>
+          <input type="email" id="email"
+                 placeholder="jean.k@gmail.com"
+                 class="w-full bg-blue-950/50 border border-blue-800 rounded-2xl pl-12 pr-4 py-3 text-white focus:outline-none focus:border-blue-400">
+        </div>
+      </div>
+
+      <!-- ROLE + STATUS -->
+      <div class="grid grid-cols-1 gap-6">
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-black text-blue-100/40 uppercase tracking-widest ml-1">
+            Rôle
+          </label>
+
+          <select id="role" class="w-full bg-blue-950/50 border border-blue-800 rounded-2xl px-4 py-3 text-white">
+            <option value="user">Utilisateur</option>
+            <option value="admin">Administrateur</option>
+          </select>
+        </div>
+
+       
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="flex gap-4 pt-4">
+
+        <button id="submitBtn" type="submit"
+                class="flex-grow py-4 bg-blue-600 hover:bg-blue-500 text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-600/20">
+          Créer le compte
+        </button>
+
+        <button type="button"
+                
+                class="px-8 py-4 bg-blue-950 border border-blue-800 text-blue-100/40 font-black uppercase text-[10px] tracking-[0.2em] rounded-2xl hover:text-white">
+          Annuler
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+<div id="toastContainer" class="fixed top-5 right-5 space-y-2 z-50"></div>
+
+  </main>
+
+
+
+</div>
+
+
+<script type="module" src="../assets/JS/modules/admin/usersAdmin.js"></script>
+
+</body>
+</html>

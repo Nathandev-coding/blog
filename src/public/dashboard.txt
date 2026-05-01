@@ -1,0 +1,1689 @@
+<?php 
+ session_start();
+ define("SECURE_ACCESS", true);
+ if(!isset($_SESSION["user"]["id"]) && !isset($_SESSION['user']['role']) && !isset($_SESSION['user']['username']) && !isset($_SESSION['user']['nom'])){
+    header("location:../../index.php");
+    
+  }
+  $nom = $_SESSION['user']['prenom'];
+  $email = $_SESSION['user']['username'];
+  $role = $_SESSION['user']['role'];
+  if($role != "gestionnaire"){
+    header("location: ../../index.php");
+  }
+
+  require_once '../../config/database.php';
+  require_once '../pharmacie/action/stockControlers.php';
+
+    $db = new Database;
+    $conn = $db->connect();
+    $stock = new Stock($conn);
+
+   $rapportConsommationHebdomadaire = $stock->getRapportStockSemaineEnCours();
+    //stock le rapport de consommation hebdomadaire dans une variable de session
+    $_SESSION['rapportConsommationHebdomadaire'] = $rapportConsommationHebdomadaire;
+ 
+    
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Clinix</title>
+    <link rel="website icon" type="png" href="../../public/assets/images/clinix.png" >
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .sidebar-item.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .patient-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .urgent-badge {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .notification-badge {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .chart-container {
+           
+            display: none;
+
+        }
+         .chart-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+          .chart-container1 {
+          
+            display: none;
+        }
+        .chart-container1.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .sectionContent{
+            display: none;
+        }
+        .sectionContent.active{
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden" id="content">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 bg-white  bg-gradient-to-l from-blue-100 to-blue-200 shadow-lg hidden md:block overflow-scroll">
+            <div class="p-4 border-b border-gray-200   bg-gradient-to-l from-blue-500 to-blue-700 flex justify-center items-center space-x-3">
+                <div class="bg-blue-100 p-2 rounded-full">
+                    <i class="fas fa-hospital text-blue-600 text-xl"></i>
+                </div>
+               
+            </div>
+            
+            <div class="p-4">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="relative">
+                        <i class="fas fa-user-circle bg-blue-200 text-blue-700 border-blue-700 border w-10 h-10 rounded-full flex items-center justify-center"></i>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                    </div>
+                    <div>
+                        <p class="font-medium"><?= $nom ?></p>
+                        <p class="text-xs text-gray-500"><?= $role ?></p>
+                    </div>
+                </div>
+                
+<nav class="space-y-1">
+
+    <!-- Dashboard -->
+    <a href="dashboard.php" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg text-blue-600 hover:text-blue-600">
+        <i class="fas fa-home w-5"></i>
+        <span>Tableau de bord</span>
+    </a>
+    
+    <!-- Abonnee -->
+    <a href="abonner.php" class="sidebar-item  flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fas fa-user-tie w-5"></i>
+        <span>Abonnée</span>
+    </a>
+
+    <!-- Facture -->
+    <a href="facture.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-file-invoice w-5"></i>
+        <span>Factures</span>
+    </a>
+
+    <!-- Dépenses -->
+    <a href="depense.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-money-bill-wave w-5"></i>
+        <span>Dépenses</span>
+    </a>
+
+    <!-- Recettes -->
+    <a href="recette.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-money-bill-trend-up w-5"></i>
+        <span>Recettes</span>
+    </a>
+
+    <!-- Pharmacie -->
+    <a href="pharmacie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-pills w-5"></i>
+        <span>Pharmacie</span>
+    </a>
+
+    <!-- Radiologie -->
+    <a href="radiologie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-x-ray w-5"></i>
+        <span>Radiologie</span>
+    </a>
+
+    <!-- Entrée / Sortie -->
+    <a href="entreSortie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-exchange-alt w-5"></i>
+        <span>Entrée / Sortie</span>
+    </a>
+
+    <!-- Soldes -->
+    <a href="solde.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-wallet w-5"></i>
+        <span>Soldes</span>
+    </a>
+    
+     <!-- Inspection -->
+    <a href="inspection.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fa-solid fa-magnifying-glass-chart w-5"></i>
+        <span>Audit</span>
+    </a>
+
+    <!-- Rapport -->
+    <a href="rapport.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-chart-pie w-5"></i>
+        <span>Rapport</span>
+    </a>
+
+</nav>
+
+            </div>
+            
+            <div class=" bottom-0 w-full p-4 border-t  border-gray-200 mt-20">
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="../auth/logout.php" class="flex items-center space-x-3 p-3 rounded-lg text-red-600 hover:text-red-700">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </div>
+        <!-- mobile sidebar -->
+        <div class="mobileSidebar absolute top-14 overflow-scroll  w-64 block bg-white shadow-lg  md:hidden translate-x-[-240px] opacity-0 transition-all duration-300">
+             <div class="p-4">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="relative">
+                        <i class="fas fa-user-circle bg-blue-200 text-blue-700 border-blue-700 border w-10 h-10 rounded-full flex items-center justify-center"></i>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                    </div>
+                    <div>
+                        <p class="font-medium"><?= $nom ?></p>
+                        <p class="text-xs text-gray-500"><?= $role ?></p>
+                    </div>
+                </div>
+                
+<nav class="space-y-1">
+
+    <!-- Dashboard -->
+    <a href="dashboard.php" class="sidebar-item active flex items-center space-x-3 p-3 rounded-lg text-blue-600 hover:text-blue-600">
+        <i class="fas fa-home w-5"></i>
+        <span>Tableau de bord</span>
+    </a>
+
+    <!-- Facture -->
+    <a href="facture.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-file-invoice w-5"></i>
+        <span>Factures</span>
+    </a>
+
+    <!-- Dépenses -->
+    <a href="depense.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-money-bill-wave w-5"></i>
+        <span>Dépenses</span>
+    </a>
+
+    <!-- Recettes -->
+    <a href="recette.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-money-bill-trend-up w-5"></i>
+        <span>Recettes</span>
+    </a>
+
+    <!-- Pharmacie -->
+    <a href="pharmacie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-pills w-5"></i>
+        <span>Pharmacie</span>
+    </a>
+
+    <!-- Radiologie -->
+    <a href="radiologie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-x-ray w-5"></i>
+        <span>Radiologie</span>
+    </a>
+
+    <!-- Entrée / Sortie -->
+    <a href="entreSortie.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-exchange-alt w-5"></i>
+        <span>Entrée / Sortie</span>
+    </a>
+
+    <!-- Soldes -->
+    <a href="solde.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-wallet w-5"></i>
+        <span>Soldes</span>
+    </a>
+
+    <!-- Rapport -->
+    <a href="rapport.php" class="sidebar-item flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+        <i class="fas fa-chart-pie w-5"></i>
+        <span>Rapport</span>
+    </a>
+
+</nav>
+            </div>
+            
+            <div class=" bottom-0 w-full p-4 border-t  border-gray-200 mt-20">
+                <a href="#" class="flex items-center space-x-3 p-3 rounded-lg text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-cog w-5"></i>
+                    <span>Paramètres</span>
+                </a>
+                <a href="../auth/logout.php" class="flex items-center space-x-3 p-3 rounded-lg text-red-600 hover:text-red-700">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm fixed md:relative w-full">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <div class="flex items-center space-x-4">
+                        <button  class="md:hidden text-gray-500">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <h2 class="hidden sm:block text-xl font-semibold text-gray-800">Dashboard</h2>
+                    </div>
+                    
+                    <div class="flex items-center space-x-6">
+                        <div class="hidden relative">
+                            <button class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="notification-badge absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-xs flex items-center justify-center">3</span>
+                            </button>
+                        </div>
+                        <div class="hidden">
+                            <button class="text-gray-500 hover:text-gray-700">
+                                <i class="fas fa-envelope text-xl"></i>
+                                <span class="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full text-white text-xs flex items-center justify-center">5</span>
+                            </button>
+                        </div>
+                        <div class=" md:block">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-user-circle bg-blue-200 text-blue-700 border-blue-700 border w-10 h-10 rounded-full flex items-center justify-center"></i>
+                                <span class="text-sm font-medium"><?= $email ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content -->
+<main class="p-6 space-y-8">
+    
+    <!-- ===========================
+         SECTION CAISSE
+    ============================ -->
+    
+    
+    <section>
+        <h1 class="text-2xl font-bold mb-4">Caisse</h1>
+<!-- Charts and Transactions -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+
+    <!-- ðÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Statistiques Journalières -->
+    <div class="bg-white rounded-xl shadow p-6 hover:shadow-lg transition duration-200">
+        <h2 class="text-base font-semibold text-gray-700 mb-5 flex items-center gap-2">
+            <i class="fas fa-calendar-day text-blue-500 text-lg"></i>
+            Statistiques Journalières
+        </h2>
+
+        <div class="grid grid-cols-1 gap-6">
+
+            <!-- USD -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 hover:bg-blue-100 transition">
+                <h3 class="font-semibold text-blue-700 text-sm tracking-wide flex items-center gap-2">
+                    <i class="fas fa-dollar-sign"></i> RECETTES JOURNALIÈRES (USD)
+                </h3>
+
+                <div class="mt-3 space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Entrée USD</p>
+                        <p class="text-gray-700 font-semibold text-sm" id="entreeUSD">0 $</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Sortie USD</p>
+                        <p class="text-gray-700 font-semibold text-sm" id="sortieUSD">0 $</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CDF -->
+            <div class="bg-green-50 border border-green-200 rounded-xl p-5 hover:bg-green-100 transition">
+                <h3 class="font-semibold text-green-700 text-sm tracking-wide flex items-center gap-2">
+                    <i class="fas fa-money-bill-wave"></i> RECETTES JOURNALIÈRES (CDF)
+                </h3>
+
+                <div class="mt-3 space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Entrée CDF</p>
+                        <p class="text-gray-700 font-semibold text-sm" id="entree">0 Fc</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Sortie CDF</p>
+                        <p class="text-gray-700 font-semibold text-sm" id="sortie">0 Fc</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solde -->
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-5 hover:bg-purple-100 transition">
+                <h3 class="font-semibold text-purple-700 text-sm tracking-wide flex items-center gap-2">
+                    <i class="fas fa-wallet"></i> SOLDE (Aujourd’hui)
+                </h3>
+
+                <div class="mt-3 space-y-2">
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Solde USD</p>
+                        <p class="text-gray-900 font-bold text-sm" id="soldeUSD">0 $</p>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-sm p-3 flex justify-between hover:bg-gray-50">
+                        <p class="text-gray-600 text-sm">Solde CDF</p>
+                        <p class="text-gray-900 font-bold text-sm" id="solde">0 Fc</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ðÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Statistiques Mensuelles -->
+    <div class="bg-white rounded-xl shadow p-6 lg:col-span-2 hover:shadow-lg transition duration-200">
+        <h2 class="text-lg font-semibold mb-6 text-gray-800 flex items-center gap-2">
+            <i class="fas fa-chart-bar text-green-600 text-xl"></i>
+            Statistiques Globales du Mois en Cours
+        </h2>
+
+        <div class="grid grid-cols-1  gap-6">
+
+            <!-- Entrées -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 hover:bg-blue-100 transition">
+                <h3 class="font-semibold text-blue-700 text-sm flex items-center gap-2">
+                    <i class="fas fa-arrow-down"></i> ENTRÉES GLOBALES
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="entreeCDFEnCours">0 Fc</p>
+                        <span class="text-gray-600 text-xs">Entrées CDF</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="entreeUSDEnCours">0 $</p>
+                        <span class="text-gray-600 text-xs">Entrées USD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sorties -->
+            <div class="bg-red-50 border border-red-200 rounded-xl p-5 hover:bg-red-100 transition">
+                <h3 class="font-semibold text-red-700 text-sm flex items-center gap-2">
+                    <i class="fas fa-arrow-up"></i> SORTIES GLOBALES
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="sortieCDFEnCours">0 Fc</p>
+                        <span class="text-gray-600 text-xs">Sorties CDF</span>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="sortieUSDEnCours">0 $</p>
+                        <span class="text-gray-600 text-xs">Sorties USD</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Solde Mensuel -->
+            <div class="bg-purple-50 border border-purple-200 rounded-xl p-5 hover:bg-purple-100 transition ">
+                <h3 class="font-semibold text-purple-700 text-sm flex items-center gap-2">
+                    <i class="fas fa-wallet"></i> SOLDE DU MOIS
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="soldeMois">0 Fc</p>
+                        <span class="text-gray-600 text-xs">Solde CDF</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow text-center hover:bg-gray-50">
+                        <p class="text-gray-800 font-bold text-xl" id="soldeMoisUSD">0 $</p>
+                        <span class="text-gray-600 text-xs">Solde USD</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Recette Section -->
+<div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden mt-10 transition hover:shadow-2xl duration-300 mb-6">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-400 text-white px-6 py-5 flex justify-between items-center">
+        <h2 class="text-xl md:text-2xl font-bold uppercase tracking-wide flex items-center gap-3">
+            <i class="fas fa-chart-pie text-2xl opacity-90"></i>
+            Situation Detaillée d'Aujourd'hui
+            <span class="ml-2 text-yellow-300 font-extrabold text-lg">
+                <?= ucfirst($stats[0]['mois'] ?? '') ?>
+            </span>
+        </h2>
+        <a href="dashboard.php" class="bg-white text-blue-600 px-4 py-1 rounded-full shadow hover:bg-blue-100 transition">
+            Actualiser
+        </a>
+    </div>
+
+    <div class="p-6 space-y-5">
+
+        <!-- TABLE -->
+        <div class="overflow-x-auto rounded-lg border border-gray-200">
+            <table class="w-full text-sm text-gray-700 border-collapse" id="tableRecette">
+
+                <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wide">
+                    <tr>
+                        <th class="px-6 py-3 text-left" rowspan="2">Libellé</th>
+                        <th class="px-6 py-3 text-right border-l" colspan="2">Entrée</th>
+                        <th class="px-6 py-3 text-right border-l" colspan="2">Sortie</th>
+                    </tr>
+                    <tr>
+                        <th class="px-6 py-2 text-right border-l border-b">USD</th>
+                        <th class="px-6 py-2 text-right border-l border-b">CDF</th>
+                        <th class="px-6 py-2 text-right border-l border-b">USD</th>
+                        <th class="px-6 py-2 text-right border-l border-b">CDF</th>
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-200 text-gray-800" id="recetteBody">
+                    <tr>
+                        <td colspan="5" class="text-center py-10 text-gray-400 flex flex-col items-center justify-center gap-2">
+                            <i class="fas fa-spinner fa-spin text-2xl"></i>
+                            <span>Chargement des données...</span>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tfoot id="journalFooter" class="bg-gray-50 font-semibold text-gray-700"></tfoot>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+   
+        <!-- Charts Caisse -->
+        <div class="grid grid-cols-1  gap-6 mb-6">
+            <!-- Recettes Hebdomadaires -->
+            <div class="bg-white rounded-lg shadow p-6 ">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-md font-medium">Recettes Hebdomadaires</h2>
+                    <div class="flex space-x-2">
+                        <button onclick="openChart('entreeHebdoChartContainer')" class="px-3 py-1 text-xs bg-pink-100 text-pink-600 rounded">Entrées</button>
+                        <button onclick="openChart('soldeHebdoChartContainer')" class="px-3 py-1 text-xs bg-purple-100 text-purple-600 rounded">Solde</button>
+                        <button onclick="openChart('sortieHebdoChartContainer')" class="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded">Sortie</button>
+                    </div>
+                </div>
+                <div class="chart-container active" id="entreeHebdoChartContainer">
+                    <canvas id="entreeHebdoChart" width="200" height="100"></canvas>
+                </div>
+                <div class="chart-container" id="soldeHebdoChartContainer">
+                    <canvas id="soldeHebdoChart" width="200" height="100"></canvas>
+                </div>
+                <div class="chart-container" id="sortieHebdoChartContainer">
+                    <canvas id="sortieHebdoChart" width="200" height="100"></canvas>
+                </div>
+            </div>
+
+           
+        </div>
+
+        <!-- Vue Mensuelle  et journaliers -->
+   <!-- Vue Mensuelle et Journalière -->
+<div class="mb-6 bg-white rounded-xl shadow">
+    
+    <!-- Onglets -->
+    <div class="flex justify-start border-b px-4 bg-gray-50 rounded-t-xl">
+        <button onclick="openSection( event, 'journaliersSection')" 
+                class="sectionBtn px-5 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 focus:outline-none">
+            Journaliere
+        </button>
+        <button onclick="openSection(event,'mensuelleSection')" 
+                class="sectionBtn px-5 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:border-blue-400 focus:outline-none">
+            Mensuelle
+        </button>
+    </div>
+
+    <!-- Section Journalière -->
+    <div class="sectionContent  p-4" id="mensuelleSection">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Recettes Mensuelle</h2>
+            <div class="flex space-x-2">
+                <button onclick="openChart1('entreeJourContainer')" 
+                        class="px-3 py-1 text-xs bg-pink-100 text-pink-600 rounded hover:bg-pink-200">
+                    Recette
+                </button>
+                <button onclick="openChart1('soldesJourContainer')" 
+                        class="px-3 py-1 text-xs bg-purple-100 text-purple-600 rounded hover:bg-purple-200">
+                    Solde
+                </button>
+            </div>
+        </div>
+        <div class="chart-container1 active" id="entreeJourContainer">
+            <canvas id="mouvementMois" height="160"></canvas>
+        </div>
+        <div class="chart-container1 " id="soldesJourContainer">
+            <canvas id="soldesMois" height="160"></canvas>
+        </div>
+    </div>
+
+    <!-- Section Mensuelle -->
+    <div class="sectionContent active p-4" id="journaliersSection" >
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-700">Recettes Journalieres</h2>
+            <div class="flex space-x-2">
+                <button onclick="openChart('entreeMoisContainer')" 
+                        class="px-3 py-1 text-xs bg-pink-100 text-pink-600 rounded hover:bg-pink-200">
+                    Recette
+                </button>
+                <button onclick="openChart('soldesMoisContainer')" 
+                        class="px-3 py-1 text-xs bg-purple-100 text-purple-600 rounded hover:bg-purple-200">
+                    Solde
+                </button>
+            </div>
+        </div>
+        <div class="chart-container active" id="entreeMoisContainer">
+            <canvas id="mouvementJours" height="160"></canvas>
+        </div>
+        <div class="chart-container" id="soldesMoisContainer">
+            <canvas id="soldesJours" height="160"></canvas>
+        </div>
+    </div>
+</div>
+
+
+    </section>
+
+    <!-- ===========================
+         SECTION PHARMACIE
+    ============================ -->
+    <section>
+        <h1 class="text-2xl font-bold mb-4">Pharmacie</h1>
+
+        <!-- Statistiques Médicaments -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow p-6 flex items-center border-l-4 border-blue-500">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                    <i class="fas fa-pills text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Médicaments</p>
+                    <h3 class="text-2xl font-bold text-blue-500" id="totalMedicament">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 flex items-center border-l-4 border-green-500">
+                <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                    <i class="fas fa-file-prescription text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Stock Actif</p>
+                    <h3 class="text-2xl font-bold text-green-500" id="stockActif">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 flex items-center border-l-4 border-yellow-500">
+                <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Stock Faible</p>
+                    <h3 class="text-2xl font-bold text-yellow-500" id="stockFaible">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 flex items-center border-l-4 border-purple-500">
+                <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                    <i class="fas fa-calendar-check text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Lot Expiré</p>
+                    <h3 class="text-2xl font-bold text-purple-500" id="stockExpirer">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Médicaments les plus et moins demandés -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Plus demandés -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Médicaments les plus demandés</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th>Médicament</th>
+                                <th>Catégorie</th>
+                                <th>Total Demandé</th>
+                            </tr>
+                        </thead>
+                        <tbody id="MedicamentPlusDemander">
+                            <tr>
+                                <td colspan="3" class="text-center py-8 text-red-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Chargement...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Moins demandés -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-lg font-semibold mb-4">Médicaments les moins demandés</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th>Médicament</th>
+                                <th>Catégorie</th>
+                                <th>Total Demandé</th>
+                            </tr>
+                        </thead>
+                        <tbody id="MedicamentMoinsDemander">
+                            <tr>
+                                <td colspan="3" class="text-center py-8 text-red-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Chargement...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rapport de consommation hebdomadaire -->
+        <div class="bg-white rounded-lg shadow mb-6">
+            <div class="flex justify-between items-center p-6 border-b">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800">Rapport de consommation Hebdomadaire</h2>
+                    <p class="mt-2 text-sm text-gray-600">Analyse des consommations de médicaments pour la semaine en cours.</p>
+                </div>
+                <div class="mt-4 flex space-x-2">
+                    <button class="px-4 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                        <i class="fas fa-print mr-2"></i>Imprimer
+                    </button>
+                    <form action="../exportExcel/rapportConsommationHebdomadaire.php" method="post">
+                        <button type="submit" class="px-4 py-2 bg-green-100 text-green-600 rounded hover:bg-green-200">
+                            <i class="fas fa-file-excel mr-2"></i>Exporter en Excel
+                        </button>
+                    </form>
+                </div>
+            </div>
+<div class="overflow-x-auto shadow-md rounded-lg">
+    <table class="min-w-full divide-y divide-gray-200 table-auto">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Médicament</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Forme</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Entrée</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Sortie</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Total Retour</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Consommation Nette</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Stock Réel Restant</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100">
+            <?php if(!empty($rapportConsommationHebdomadaire)): ?>
+                <?php foreach($rapportConsommationHebdomadaire as $rapport): ?>
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <td class="px-4 py-3"><?= htmlspecialchars($rapport['nom_medicament'].' '.$rapport['dosage']) ?></td>
+                        <td class="px-4 py-3"><?= htmlspecialchars($rapport['forme']) ?></td>
+                        <td class="px-4 py-3 text-center font-medium text-green-600"><?= htmlspecialchars($rapport['total_entree']) ?></td>
+                        <td class="px-4 py-3 text-center font-medium text-red-600"><?= htmlspecialchars($rapport['total_sortie']) ?></td>
+                        <td class="px-4 py-3 text-center font-medium text-yellow-600"><?= htmlspecialchars($rapport['total_retour']) ?></td>
+                        <td class="px-4 py-3 text-center font-medium text-purple-600"><?= htmlspecialchars($rapport['consommation_nette']) ?></td>
+                        <td class="px-4 py-3 text-center font-medium text-gray-700"><?= htmlspecialchars($rapport['stock_restant']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="7" class="text-center py-8 text-gray-400 flex items-center justify-center gap-2">
+                        <i class="fas fa-spinner fa-spin"></i> Chargement...
+                    </td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+        </div>
+    </section>
+</main>
+
+
+        </div>
+    </div>
+    <div id="loader" class="fixed inset-0 flex flex-col items-center justify-center bg-white z-50 transition-opacity duration-900">
+    <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent border-solid rounded-full animate-spin">
+        <img src="../../public/assets/images/clinix.png">
+    </div>
+    <p class="mt-4 text-blue-600 font-medium">Chargement...</p>
+  </div>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle dropdown menu
+            const dropLinkBtn = document.querySelectorAll("#dropLinkBtn");
+            const dropLink = document.querySelectorAll('#dropLink');
+            dropLinkBtn.forEach((btn) => {
+                btn.addEventListener('click', function() {
+                    dropLink.forEach((link) => {
+                        link.classList.toggle('hidden');
+                        link.classList.toggle('opacity-0');
+                    });
+                });
+            });
+            // Toggle sidebar on mobile
+            const sidebarToggle = document.querySelector('header button');
+            const sidebar = document.querySelector('.mobileSidebar');
+            
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('translate-x-[-240px]');
+                    sidebar.classList.toggle('opacity-0');
+                });
+            }
+            
+           
+
+           
+           window.addEventListener("load", () => {
+                const loader = document.getElementById("loader");
+                const content = document.getElementById("content");
+                 // Ajoute la classe d’opacité pour déclencher la transition
+                 loader.classList.add("opacity-0");
+                 // Après la transition, on cache complètement le loader
+                 setTimeout(() => {
+                    loader.style.display = "none";
+                    content.classList.remove("hidden"); // Affiche le contenu
+                }, 900); // même durée que "duration-700"
+            });
+
+
+              //if you click out target
+              window.addEventListener('click', (event)=>{
+                if(!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)){
+                    sidebar.classList.add('translate-x-[-240px]');
+                    sidebar.classList.add('opacity-0');
+                }
+            });
+        });
+    </script>
+    <script defer>
+        async function totalEntree() {
+            const res = await fetch("../../API/admin/entre.php");
+            const data = await res.json();
+            document.getElementById("entree").textContent = data.montant_entre + ' fc';
+        }
+         async function totalEntreeUSD() {
+            const res = await fetch("../../API/admin/entreUSD.php");
+            const data = await res.json();
+            document.getElementById("entreeUSD").textContent = data.montant_entre + ' $';
+        }
+         async function totalSortie() {
+            const res = await fetch("../../API/admin/sortie.php");
+            const data = await res.json();
+            document.getElementById("sortie").textContent = data.montant_sortie + ' fc';
+        }
+         async function totalSortieUSD() {
+            const res = await fetch("../../API/admin/sortieUSD.php");
+            const data = await res.json();
+            document.getElementById("sortieUSD").textContent = data.montant_sortie + ' $';
+        }
+         async function totalEntreeUSDMoisEncours() {
+            const res = await fetch("../../API/admin/entree_usd_mois_encours.php");
+            const data = await res.json();
+            document.getElementById("entreeUSDEnCours").textContent = data.montant_usd + ' $';
+        }
+         async function totalEntreeCDFMoisEncours() {
+            const res = await fetch("../../API/admin/entree_cdf_mois_encours.php");
+            const data = await res.json();
+            document.getElementById("entreeCDFEnCours").textContent = data.montant_usd + ' Fc';
+        }
+         async function totalsortieCDFMoisEncours() {
+            const res = await fetch("../../API/admin/sortie_cdf_mois_encours.php");
+            const data = await res.json();
+            document.getElementById("sortieCDFEnCours").textContent = data.montant_usd + ' fc';
+        }
+        async function totalsortieUSDMoisEncours() {
+            const res = await fetch("../../API/admin/sortie_usd_mois_encours.php");
+            const data = await res.json();
+            document.getElementById("sortieUSDEnCours").textContent = data.montant_usd + ' $';
+        }
+      
+         async function soldeToDay() {
+            const res = await fetch("../../API/admin/solde.php");
+            const data = await res.json();
+            document.getElementById("solde").textContent = data.solde_today + ' fc';
+        }
+        async function soldeToDayUsd() {
+            const res = await fetch("../../API/admin/soldeUSD.php");
+            const data = await res.json();
+            document.getElementById("soldeUSD").textContent = data.solde_today + '$';
+        }
+ 
+            async function getRecetteToDay(){
+               try{
+                    const [recetteRes, depenseRes] = await Promise.all([
+                            fetch('../../API/admin/detailFactureToDay.php'),
+                             fetch('../../API/admin/depenseToDay.php')
+                    ]);
+                    
+                    
+                    const recettes = await recetteRes.json();
+                    const depenses = await depenseRes.json();
+                    
+                    const recetteBody = document.getElementById('recetteBody');
+                    recetteBody.innerHTML = "";
+                    
+                    if(recettes.length === 0){
+                        const noDataRow = document.createElement("tr");
+                        noDataRow.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-center" colspan="5">Aucun recette pour aujourd'hui</td>`;
+                        recetteBody.appendChild(noDataRow);
+                    }else{
+                        recettes.forEach(recette =>{
+                            const row = document.createElement('tr');
+                            row.classList.add('hover:bg-gray-100');
+                            row.innerHTML = `
+                            <td class="px-6 py-3 font-medium">${recette.libelle}</td>
+                            <td class="px-6 py-3 text-right text-blue-700 font-semibold">
+                            ${recette.total_usd}
+                            </td>
+                             <td class="px-6 py-3 text-right text-emerald-700 font-semibold">
+                            ${recette.total_cdf}
+                        </td>
+                         <td class="px-6 py-3 text-right text-emerald-700 font-semibold">
+                            -
+                        </td>
+                         <td class="px-6 py-3 text-right text-emerald-700 font-semibold">
+                           -
+                        </td>
+                            `
+                            recetteBody.appendChild(row);
+                        });
+                    }
+                    
+                    
+                    
+                    
+                }catch (error){
+                    console.error("Erreur fetch:", error);
+                }
+            }
+           
+   let chartInstance = null; // Chart.js global instance
+
+async function afficherEntreeHebdo() {
+    try {
+        const res = await fetch("../../API/admin/hey.php");
+        const data = await res.json();
+
+        const labels = data.map(item => item.jour);
+        const valeurs = data.map(item => item.total_entree);
+
+        const couleurs = {
+            "Lundi": "rgba(255, 99, 132, 0.2)",
+            "Mardi": "rgba(255, 159, 64, 0.2)",
+            "Mercredi": "rgba(255, 205, 86, 0.2)",
+            "Jeudi": "rgba(75, 192, 192, 0.2)",
+            "Vendredi": "rgba(153, 102, 255, 0.2)",
+            "Samedi": "rgba(121, 85, 72, 0.2)",
+            "Dimanche": "rgba(201, 203, 207, 0.2)"
+        };
+
+        const couleursBorder = {
+            "Lundi": "rgba(255, 99, 132)",
+            "Mardi": "rgba(255, 159, 64)",
+            "Mercredi": "rgba(255, 205, 86)",
+            "Jeudi": "rgba(75, 192, 192)",
+            "Vendredi": "rgba(153, 102, 255)",
+            "Samedi": "rgba(121, 85, 72)",
+            "Dimanche": "rgba(201, 203, 207)"
+        };
+
+        const backgroundColors = labels.map(j => couleurs[j]);
+        const borderColors = labels.map(j => couleursBorder[j]);
+
+        const ctx = document.getElementById('entreeHebdoChart').getContext('2d');
+
+        if (chartInstance) {
+            // âÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Mettre à jour les données existantes
+            chartInstance.data.labels = labels;
+            chartInstance.data.datasets[0].data = valeurs;
+            chartInstance.data.datasets[0].backgroundColor = backgroundColors;
+            chartInstance.data.datasets[0].borderColor = borderColors;
+            chartInstance.update(); // Rafraîchissement du graphique
+        } else {
+            // âÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Création initiale du graphique
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Entrées de la semaine',
+                        data: valeurs,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error("Erreur fetch :", error);
+    }
+}
+
+
+async function getRecetteToDay() {
+    try {
+        const [recetteRes, depenseRes] = await Promise.all([
+            fetch('../../API/admin/detailFactureToDay.php'),
+            fetch('../../API/admin/depenseToDay.php')
+        ]);
+
+        const recettes = await recetteRes.json();
+        const depenses = await depenseRes.json();
+
+        const tbody = document.getElementById('recetteBody');
+        tbody.innerHTML = '';
+
+        let totalEntreeUSD = 0;
+        let totalEntreeCDF = 0;
+        let totalSortieUSD = 0;
+        let totalSortieCDF = 0;
+
+        // --- Recettes (Entrées) ---
+        recettes.forEach(item => {
+            const row = document.createElement('tr');
+            row.classList.add('hover:bg-green-50');
+
+            row.innerHTML = `
+                <td class="px-6 py-3 font-medium">${item.libelle}</td>
+                <td class="px-6 py-3 text-right text-blue-700 font-semibold">${item.total_usd}</td>
+                <td class="px-6 py-3 text-right text-emerald-700 font-semibold">${item.total_cdf}</td>
+                <td class="px-6 py-3 text-right">-</td>
+                <td class="px-6 py-3 text-right">-</td>
+            `;
+            tbody.appendChild(row);
+
+            totalEntreeUSD += parseFloat(item.total_usd) || 0;
+            totalEntreeCDF += parseFloat(item.total_cdf) || 0;
+        });
+
+        // --- Dépenses (Sorties) ---
+        depenses.forEach(item => {
+            const row = document.createElement('tr');
+            row.classList.add('hover:bg-red-50');
+
+            row.innerHTML = `
+                <td class="px-6 py-3 font-medium">${item.libelle}</td>
+                <td class="px-6 py-3 text-right">-</td>
+                <td class="px-6 py-3 text-right">-</td>
+                <td class="px-6 py-3 text-right text-blue-700 font-semibold">${item.total_usd}</td>
+                <td class="px-6 py-3 text-right text-emerald-700 font-semibold">${item.total_cdf}</td>
+            `;
+            tbody.appendChild(row);
+
+            totalSortieUSD += parseFloat(item.total_usd) || 0;
+            totalSortieCDF += parseFloat(item.total_cdf) || 0;
+        });
+
+        // --- Aucun résultat ---
+        if (recettes.length === 0 && depenses.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td class="px-6 py-4 text-center" colspan="5">Aucune opération pour aujourd'hui</td>`;
+            tbody.appendChild(row);
+        }
+
+        // --- Footer avec totaux ---
+        const tfoot = document.getElementById('journalFooter');
+        if(tfoot){
+            tfoot.innerHTML = `
+                <tr class="bg-gray-100 font-semibold">
+                    <td class="px-6 py-3 text-right">TOTAL</td>
+                    <td class="px-6 py-3 text-right text-blue-700">${totalEntreeUSD.toLocaleString('fr-FR', {minimumFractionDigits:2})} $</td>
+                    <td class="px-6 py-3 text-right text-emerald-700">${totalEntreeCDF.toLocaleString('fr-FR', {minimumFractionDigits:2})} FC</td>
+                    <td class="px-6 py-3 text-right text-blue-700">${totalSortieUSD.toLocaleString('fr-FR', {minimumFractionDigits:2})} $</td>
+                    <td class="px-6 py-3 text-right text-emerald-700">${totalSortieCDF.toLocaleString('fr-FR', {minimumFractionDigits:2})} FC</td>
+                </tr>
+                <tr class="bg-gray-200 font-bold">
+                    <td class="px-6 py-3 text-right" colspan="2">SOLDE</td>
+                    <td class="px-6 py-3 text-right text-blue-700">${(totalEntreeUSD - totalSortieUSD).toLocaleString('fr-FR', {minimumFractionDigits:2})} $</td>
+                    <td class="px-6 py-3 text-right text-emerald-700" colspan="2">${(totalEntreeCDF - totalSortieCDF).toLocaleString('fr-FR', {minimumFractionDigits:2})} FC</td>
+                </tr>
+            `;
+        }
+
+    } catch (error) {
+        console.error('Erreur fetch journal:', error);
+    }
+}
+
+
+async function MedicamentPlusDemander(){
+    try {
+        const res = await fetch("../../API/pharmacie/medicamentPlusDemade.php");
+        const data = await res.json();
+        const tableMediMoinsDemander = document.getElementById('MedicamentPlusDemander');
+        tableMediMoinsDemander.innerHTML = "";
+
+
+        if(data.length === 0){
+            const noData = document.createElement('tr');
+            noData.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-center-500" colspan="6">Aucun Medicament trouvée</td>`;
+            tableMediMoinsDemander.appendChild(noData);
+        }else{
+            data.forEach(medicament =>{
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-100');
+
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${medicament.nom_medicament}  ${medicament.dosage}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${medicament.forme} </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${medicament.total_sortie}</td>`
+                tableMediMoinsDemander.appendChild(row);
+            })
+         
+        }
+        
+    } catch (error) {
+        console.error("Erreur fetch:", error);
+    }
+}
+async function MedicamentMoinsDemander(){
+    try {
+        const res = await fetch("../../API/pharmacie/medicamentMoinsDemade.php");
+        const data = await res.json();
+        const tableMediMoinsDemander = document.getElementById('MedicamentMoinsDemander');
+        tableMediMoinsDemander.innerHTML = "";
+
+
+        if(data.length === 0){
+            const noData = document.createElement('tr');
+            noData.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm text-center-500" colspan="6">Aucun Medicament trouvée</td>`;
+            tableMediMoinsDemander.appendChild(noData);
+        }else{
+            data.forEach(medicament =>{
+                const row = document.createElement('tr');
+                row.classList.add('hover:bg-gray-100');
+
+                row.innerHTML = `<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${medicament.nom_medicament}  ${medicament.dosage}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${medicament.forme} </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${medicament.total_sortie}</td>`
+                tableMediMoinsDemander.appendChild(row);
+            })
+         
+        }
+        
+    } catch (error) {
+        console.error("Erreur fetch:", error);
+    }
+}
+  async function totalMedicament() {
+        const res = await fetch("../../API/pharmacie/total_medicament.php");
+        const data = await res.json();
+        document.getElementById("totalMedicament").textContent = data.total_medicament;
+        
+      }
+       async function stockFaible() {
+        const res = await fetch("../../API/pharmacie/stock_faible.php");
+        const data = await res.json();
+        document.getElementById("stockFaible").textContent = data.stock_faible;
+        
+      }
+    async function stockActif() {
+        const res = await fetch("../../API/pharmacie/stock_actif.php");
+        const data = await res.json();
+        document.getElementById("stockActif").textContent = data.stock_actif;
+        
+      }
+    async function stockExpirer() {
+        const res = await fetch("../../API/pharmacie/stock_expire.php");
+        const data = await res.json();
+        document.getElementById("stockExpirer").textContent = data.stock_expirer;
+        
+    }
+
+let soldeHebdoChart = null;
+async function afficherSoldeHebdo() {
+    try {
+        const res = await fetch("../../API/admin/solde_semaine.php");
+        const data = await res.json();
+
+        const labels = data.map(item => item.jour);
+        const valeurs = data.map(item => item.solde);
+
+        // Détruire l'ancien graphique si existe
+        if (soldeHebdoChart !== null) {
+            soldeHebdoChart.destroy();
+        }
+
+        const ctx = document.getElementById('soldeHebdoChart').getContext('2d');
+        soldeHebdoChart = new Chart(ctx, {
+            type: 'bar', // tu peux mettre 'line' pour un graphique en courbes
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Solde par jour (Fc)',
+                    data: valeurs,
+                    backgroundColor:
+                     [
+                        "rgba(153, 102, 255, 0.2)",
+                        "rgba(201, 203, 207, 0.2)",
+                        "rgba(255, 99, 132, 0.2)",
+                        "rgba(255, 159, 64, 0.2)",
+                        "rgba(255, 205, 86, 0.2)",
+                        "rgba(75, 192, 192, 0.2)",
+                        "rgba(121, 85, 72, 0.2)"
+                       
+                    ],
+                    borderColor: [
+                        
+                        "rgba(153, 102, 255,1)",
+                        "rgba(201, 203, 207,1)",
+                        "rgba(255, 99, 132,1)",
+                        "rgba(255, 205, 86,1)",
+                         "rgba(255, 159, 64,1)",
+                        "rgba(75, 192, 192,1)",
+                        "rgba(121, 85, 72,1)"
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error("Erreur fetch :", error);
+    }
+}
+let  sortieHebdoChart = null;
+async function afficherSortieHebdo() {
+    try {
+        const res = await fetch("../../API/admin/sortie.semaine.php");
+        const data = await res.json();
+
+        const labels = data.map(item => item.jour);
+        const valeurs = data.map(item => item.total_sortie);
+
+        const couleurs = {
+            "Lundi": "rgba(201, 203, 207, 0.2)",
+            "Mardi": "rgba(255, 159, 64, 0.2)",
+            "Mercredi": "rgba(255, 205, 86, 0.2)",
+            "Jeudi": "rgba(75, 192, 192, 0.2)",
+            "Vendredi": "rgba(153, 102, 255, 0.2)",
+            "Samedi": "rgba(121, 85, 72, 0.2)",
+            "Dimanche": "rgba(255, 99, 132, 0.2) "
+        };
+
+        const couleursBorder = {
+            "Lundi": "rgba(201, 203, 207)",
+            "Mardi": "rgba(255, 159, 64)",
+            "Mercredi": "rgba(255, 205, 86)",
+            "Jeudi": "rgba(75, 192, 192)",
+            "Vendredi": "rgba(153, 102, 255)",
+            "Samedi": "rgba(121, 85, 72)",
+            "Dimanche": " rgba(255, 99, 132)"
+        };
+
+        const backgroundColors = labels.map(j => couleurs[j]);
+        const borderColors = labels.map(j => couleursBorder[j]);
+
+        const ctx = document.getElementById('sortieHebdoChart').getContext('2d');
+
+        if (sortieHebdoChart) {
+            // âÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Mettre à jour les données existantes
+            sortieHebdoChart.data.labels = labels;
+            sortieHebdoChart.data.datasets[0].data = valeurs;
+            sortieHebdoChart.data.datasets[0].backgroundColor = backgroundColors;
+            sortieHebdoChart.data.datasets[0].borderColor = borderColors;
+            sortieHebdoChart.update(); // Rafraîchissement du graphique
+        } else {
+            // âÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂÂ Création initiale du graphique
+            sortieHebdoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sorite de la semaine',
+                        data: valeurs,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error("Erreur fetch :", error);
+    }
+}
+
+    function openChart(chartContainerId) {
+        const chartContainers = document.querySelectorAll('.chart-container');
+        chartContainers.forEach(container => {
+            container.classList.remove('active');
+            if (container.id === chartContainerId) {
+                container.classList.add('active');
+            }
+        });
+    }  
+    function openChart1(chartContainerId) {
+        const chartContainers = document.querySelectorAll('.chart-container1');
+        chartContainers.forEach(container => {
+            container.classList.remove('active');
+            if (container.id === chartContainerId) {
+                container.classList.add('active');
+            }
+
+        });
+      
+    } 
+    function openSection(event, sectionId){
+        const sectionContainer = document.querySelectorAll(".sectionContent");
+        sectionContainer.forEach(section =>{
+            section.classList.remove('active');
+            if(section.id === sectionId ){
+                section.classList.add("active");
+            }
+        })
+          const sectionBtn = document.querySelectorAll(".sectionBtn");
+          sectionBtn.forEach(btn =>{
+            btn.classList.remove('text-blue-600','border-blue-600','border-b-2');
+            btn.classList.add('text-gray-600','hover:text-blue-600');
+          });
+
+          event.currentTarget.classList.remove('text-gray-600','hover:text-blue-600');
+          event.currentTarget.classList.add('text-blue-600','border-blue-600','border-b-2');
+    }
+     async function  soldeMois(){
+                try {
+                    const res = await fetch("../../API/admin/soldeMois.php");
+                    const data = await res.json()
+                    document.getElementById('soldeMois').textContent = data.solde_month;
+                }catch (error){
+                    console.error("erreur fetch :", error);
+                }
+            }
+            async function  soldeMoisUSD(){
+                try {
+                  const res = await fetch("../../API/admin/soldeMoisUSD.php");
+                  const data = await res.json()
+                  document.getElementById('soldeMoisUSD').textContent = data.solde_month;
+                }catch (error){
+                   console.error("erreur fetch :", error);
+                }
+            }
+    async function MouvementDuJours() {
+      try {
+        // Récupération des données depuis ton API
+        const response = await fetch("../../API/admin/entreSortieJours.php");
+        const data = await response.json();
+
+        // Extraire les labels (jours) et les datasets
+        const labels = data.map(item => item.jour);
+        const entrees = data.map(item => item.total_entree);
+        const sorties = data.map(item => item.total_sortie);
+
+        // Création du graphique
+        const ctx = document.getElementById("mouvementJours").getContext("2d");
+        new Chart(ctx, {
+          type: "line", // tu peux mettre "bar" si tu veux un histogramme
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Entrées",
+                data: entrees,
+                borderColor: "blue",
+                backgroundColor: "rgba(0, 0, 255, 0.3)", // vert clair
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: "Sorties",
+                data: sorties,
+                borderColor: "red",
+                backgroundColor: "rgba(239,68,68,0.3)", // rouge clair
+                fill: true,
+                tension: 0.3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Évolution des Entrées et Sorties par Jours"
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Jour"
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Montant"
+                },
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error("Erreur lors du chargement du graphique:", error);
+      }
+    }
+    async function MouvementMois() {
+      try {
+        // Récupération des données depuis ton API
+        const response = await fetch("../../API/admin/entreSortieMois.php");
+        const data = await response.json();
+
+        // Extraire les labels (jours) et les datasets
+        const labels = data.map(item => item.mois);
+        const entrees = data.map(item => item.total_entree);
+        const sorties = data.map(item => item.total_sortie);
+
+        // Création du graphique
+        const ctx = document.getElementById("mouvementMois").getContext("2d");
+        new Chart(ctx, {
+          type: "line", // tu peux mettre "bar" si tu veux un histogramme
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Entrées",
+                data: entrees,
+                borderColor: "blue",
+                backgroundColor: "rgba(0, 0, 255, 0.3)", // vert clair
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: "Sorties",
+                data: sorties,
+                borderColor: "red",
+                backgroundColor: "rgba(239,68,68,0.3)", // rouge clair
+                fill: true,
+                tension: 0.3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: "top",
+              },
+              title: {
+                display: true,
+                text: "Évolution des Entrées et Sorties par Mois"
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: "Mois"
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "Montant"
+                },
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+      } catch (error) {
+        console.error("Erreur lors du chargement du graphique:", error);
+      }
+    }
+     async function soldesJours(){
+        try{
+            const url = '../../API/admin/soldesJours.php';
+            const res = await fetch(url);
+            const solde = await res.json();
+            //extriare les label et le solde
+            const lables = solde.map(item => item.jour);
+            const valeurs = solde.map(item => item.solde);
+
+            
+
+            const ctx = document.getElementById('soldesJours').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: lables,
+                    datasets: [{
+                        label: 'Solde du jours',
+                        data: valeurs,
+                        borderColor: 'skyblue',
+                        backgroundColor: 'rgba(135,206,235,0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Évolution du Solde Par Jours Du Mois'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Jour'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }catch (error){
+            console.error("Erreur fetch:", error);
+        }
+    }
+      async function soldesMois(){
+        try{
+            const url = '../../API/admin/soldesMois.php';
+            const res = await fetch(url);
+            const solde = await res.json();
+            //extriare les label et le solde
+            const lables = solde.map(item => item.mois);
+            const valeurs = solde.map(item => item.solde);
+
+            
+
+            const ctx = document.getElementById('soldesMois').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: lables,
+                    datasets: [{
+                        label: 'Solde du jours',
+                        data: valeurs,
+                        borderColor: 'skyblue',
+                        backgroundColor: 'rgba(135,206,235,0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Évolution du Solde Par Jours Du Mois'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Jour'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Montant'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }catch (error){
+            console.error("Erreur fetch:", error);
+        }
+    }
+
+
+afficherEntreeHebdo();
+afficherSoldeHebdo();
+afficherSortieHebdo()
+        totalEntree();
+        totalEntreeUSD()
+        totalSortie();
+        totalSortieUSD()
+        totalEntreeUSDMoisEncours();
+        totalEntreeCDFMoisEncours();
+        totalsortieCDFMoisEncours();
+        totalsortieUSDMoisEncours();
+        
+        soldeToDay();
+       
+       
+        soldeMois();
+        soldeMoisUSD();
+        soldeToDay();
+        soldeToDayUsd();
+        MouvementDuJours();
+        MouvementMois();
+        soldesJours();
+        soldesMois();
+        
+        MedicamentMoinsDemander();
+        MedicamentPlusDemander();
+         totalMedicament();
+      stockFaible();
+      stockActif();
+      stockExpirer();
+       getRecetteToDay();
+        setInterval(totalEntree,5000);
+        setInterval(totalEntreeUSD,5000);
+        setInterval(totalSortie,5000);
+        setInterval(totalSortieUSD,5000);
+        setInterval(soldeToDay, 5000);
+        setInterval(afficherEntreeHebdo,5000);
+      
+        
+        setInterval(soldeMois, 5000);
+        setInterval(soldeMoisUSD,5000);
+        setInterval(MedicamentMoinsDemander, 5000);
+        setInterval(medicamentPlusDemade, 5000);
+        setInterval(totalMedicament,5000);
+      setInterval(stockFaible, 5000);
+      setInterval(stockActif, 5000);
+      setInterval(stockExpirer, 5000);
+       setInterval(getRecetteToDay, 5000);
+    </script>
+</body>
+</html>
